@@ -83,17 +83,18 @@ const AdminPropertyEditPage: React.FC = () => {
       e.dataTransfer.clearData();
     }
   }, [processFiles]);
-
-  const handleDragEvents = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-        setIsDragging(true);
-    } else if (e.type === 'dragleave') {
-        setIsDragging(false);
-    }
-  };
-  
+const processFiles = useCallback((files: FileList) => {
+    const newImageUrls = Array.from(files).map((file, index) => {
+        // In a real app, you'd upload the file and get a URL.
+        // Here, we simulate this by creating a placeholder URL.
+        return `https://picsum.photos/seed/upload-${Date.now()}-${index}/1200/800`;
+    });
+    
+    setProperty(prev => ({
+        ...prev,
+        images: [...(prev.images || []), ...newImageUrls]
+    }));
+  }, []);
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(e.target.files) {
         processFiles(e.target.files);
