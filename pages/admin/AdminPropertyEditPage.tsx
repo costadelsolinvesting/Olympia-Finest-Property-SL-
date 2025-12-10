@@ -84,16 +84,16 @@ const AdminPropertyEditPage: React.FC = () => {
     }
   }, [processFiles]);
 const processFiles = useCallback((files: FileList) => {
-    const newImageUrls = Array.from(files).map((file, index) => {
-        // In a real app, you'd upload the file and get a URL.
-        // Here, we simulate this by creating a placeholder URL.
-        return `https://picsum.photos/seed/upload-${Date.now()}-${index}/1200/800`;
+    const newImageUrls = Array.from(files).map((file) => {
+        const safeFileName = file.name.replace(/[^a-zA-Z0-9-.]/g, '_');
+        return `/images/${safeFileName}`;
     });
     
     setProperty(prev => ({
         ...prev,
         images: [...(prev.images || []), ...newImageUrls]
     }));
+  }, []);
   }, []);
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(e.target.files) {
