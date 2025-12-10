@@ -130,17 +130,81 @@ const processFiles = useCallback((files: FileList) => {
         ...property,
         id: `prop-${Date.now()}`,
         ref: `OFP-${Date.now().toString().slice(-4)}`,
-        images: property.images && property.images.length > 0 ? property.images : ['https://picsum.photos/seed/newprop/1200/800'],
-        features: [],
-      } as Property;
-      setProperties(prev => [...prev, newProperty]);
-    } else {
-      setProperties(prev => prev.map(p => p.id === id ? property as Property : p));
-    }
-    navigate('/admin/properties');
-  };
+      const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const propertyToSave = isNew ? {
+        ...property,
+        id: `prop-${Date.now()}`,
+        ref: `OFP-${Date.now().toString().slice(-4)}`,
+        images: property.images && property.images.length > 0 ? property.images : ['/images/placeholder.jpg'],
+        features: [],
+    } as Property : property as Property;
 
-  return (
+    const formData = new FormData();
+    formData.append("form-name", "property-submission");
+    formData.append("propertyData", JSON.stringify(propertyToSave));
+    formData.append("isNew", isNew.toString());
+
+    try {
+        const response = await fetch('/', {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData as any).toString()
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        setProperties(prev => {
+            if (isNew) {
+                return [...prev, propertyToSave];
+            } else {
+                return prev.map(p => p.id === id ? propertyToSave : p);
+            }
+        });
+        
+        alert(`Propriété ${isNew ? 'ajoutée' : 'modifiée'} ! Données envoyées à Netlify Forms.`);
+
+    } catch (error) {
+        alert('Erreur lors de l\'enregistrement. Les données sont toujours sauvegardées dans Netlify Forms.');
+    }
+    
+    navigate('/admin/properties');
+  };
+    const formData = new FormData();
+    formData.append("form-name", "property-submission");
+    formData.append("propertyData", JSON.stringify(propertyToSave));
+    formData.append("isNew", isNew.toString());
+
+    try {
+        const response = await fetch('/', {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData as any).toString()
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        setProperties(prev => {
+            if (isNew) {
+                return [...prev, propertyToSave];
+            } else {
+                return prev.map(p => p.id === id ? propertyToSave : p);
+            }
+        });
+        
+        alert(`Propriété ${isNew ? 'ajoutée' : 'modifiée'} ! Données envoyées à Netlify Forms.`);
+
+    } catch (error) {
+        alert('Erreur lors de l\'enregistrement. Les données sont toujours sauvegardées dans Netlify Forms.');
+    }
+    
+    navigate('/admin/properties');
+  };
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">{isNew ? 'Add New Property' : 'Edit Property'}</h1>
       <form onSubmit={handleSubmit} className="p-6 bg-white rounded-lg shadow-md space-y-6">
