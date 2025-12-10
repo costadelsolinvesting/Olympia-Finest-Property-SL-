@@ -1,12 +1,12 @@
 [build]
   publish = "dist"
   command = "npm run build"
-
+  
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
+  
 [[redirects]]
   from = "/admin/*"
   to = "/index.html"
@@ -14,6 +14,6 @@
 
 [functions]
   node_bundler = "esbuild"
-
+  
 [[forms]]
   name = "property-submission"
